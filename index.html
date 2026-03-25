@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>ya.festas</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #ffe4ec;
+  text-align: center;
+}
+
+.logo {
+  width: 220px;
+  margin: 20px;
+}
+
+.item {
+  background: white;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+button {
+  padding: 5px 10px;
+  margin: 5px;
+  font-size: 18px;
+}
+
+.total {
+  background: white;
+  padding: 15px;
+  margin: 20px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<img src="logo.png" class="logo">
+
+<div id="itens"></div>
+
+<div class="total">
+  <h2>Sua festa contém:</h2>
+  <div id="resumo"></div>
+  <h3 id="preco">Preço: R$ 0</h3>
+  <button onclick="copiar()">Copiar pedido</button>
+</div>
+
+<audio id="click" src="click.mp3"></audio>
+
+<script>
+let itens = [
+"Arco redondo",
+"Arco romano",
+"Número de led",
+"Luminária de corda",
+"Arco vazado",
+"Arco de borboleta",
+"Arco de Margarida",
+"Tapete bagun",
+"Tapete peludo P",
+"Tapete peludo M",
+"Tapete de crochê P",
+"Tapete de crochê M",
+"Cilindro redondo",
+"Mesa de acrílico",
+"Mesa de ferro",
+"Cômoda grande",
+"Cômoda média",
+"Cômoda pequena",
+"Boleira de louça P",
+"Boleira de louça M",
+"Boleira de louça G",
+"Boleira de acrílico P",
+"Boleira de acrílico M",
+"Boleira de acrílico G",
+"Borboleta de led",
+"Pelúcia P",
+"Pelúcia M",
+"Pelúcia G"
+];
+
+let precos = {};
+let quantidade = {};
+
+itens.forEach(item => {
+  precos[item] = 1;
+  quantidade[item] = 0;
+
+  document.getElementById("itens").innerHTML += `
+    <div class="item">
+      <h3>${item} (R$1)</h3>
+      <img src="imagens/${item.toLowerCase().replaceAll(" ", "_")}.jpg" width="80"><br>
+      <button onclick="mudar('${item}', -1)">➖</button>
+      <span id="${item}">0</span>
+      <button onclick="mudar('${item}', 1)">➕</button>
+    </div>
+  `;
+});
+
+function som(){
+  document.getElementById("click").play();
+}
+
+function mudar(item, valor){
+  som();
+  quantidade[item] += valor;
+  if(quantidade[item] < 0) quantidade[item] = 0;
+
+  document.getElementById(item).innerText = quantidade[item];
+  atualizar();
+}
+
+function atualizar(){
+  let resumo = "";
+  let total = 0;
+
+  for(let item in quantidade){
+    if(quantidade[item] > 0){
+      resumo += `
+      <div>
+        <img src="imagens/${item.toLowerCase().replaceAll(" ", "_")}.jpg" width="50">
+        ${quantidade[item]} ${item}
+      </div>
+      `;
+      total += quantidade[item];
+    }
+  }
+
+  document.getElementById("resumo").innerHTML = resumo;
+  document.getElementById("preco").innerText = "Preço: R$ " + total;
+}
+
+function copiar(){
+  let texto = document.getElementById("resumo").innerText + "\n" + document.getElementById("preco").innerText;
+  navigator.clipboard.writeText(texto);
+  alert("Pedido copiado!");
+}
+</script>
+
+</body>
+</html>
